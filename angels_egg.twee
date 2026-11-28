@@ -12,7 +12,7 @@
 }
 
 
-:: StoryCaption {"position":"1200,250","size":"100,100"}
+:: StoryCaption {"position":"1100,150","size":"100,100"}
 名字: $my_name
 时间: 第$day天
 任务: $quest
@@ -26,7 +26,22 @@
 你去吧，完成之后再回来找我。
 
 [[神父]]
-<<set $quest to "将面包分给镇民然后去找神父">>
+<<set $quest to "将面包分给镇民">>
+<<set $can_enter_deeper_town to true>>
+
+
+:: 关于商店店主…… {"position":"1325,250","size":"100,100"}
+你向神父提起商店的店主。
+神父点点头，示意他明白你的疑惑。
+
+“他和我们确实不一样，但是没关系，
+你可以信任他，至少在交易上。 
+无论他是人类与否，毫无疑问他都是店长。
+
+另外，分发食物的时候不需要考虑他们。
+现在你知道这些就可以了。”
+
+[[神父]]
 
 
 :: 关于给村民分发食物 {"position":"1600,375","size":"100,100"}
@@ -61,12 +76,16 @@
 [[黑色巨树]]
 
 
-:: 学者的房子 {"position":"2100,275","size":"100,100"}
+:: 学者的房子 {"position":"1975,25","size":"100,100"}
+没有人出来应门。
+
+[[小镇深处]]
 
 
+:: 富商的房子 {"position":"1975,275","size":"100,100"}
+没有人出来应门。
 
-:: 富商的房子 {"position":"1850,275","size":"100,100"}
-
+[[小镇深处]]
 
 
 :: 小镇中心 {"position":"1600,500","size":"100,100"}
@@ -81,14 +100,17 @@
 
 
 :: 小镇深处 {"position":"1975,150","size":"100,100"}
-以广场和喷水池为圆心，
-这一圈房子构成了第二个同心圆。
+<<if not $can_enter_deeper_town>>
+在探索小镇深处之前，先找神父了解自己的工作吧。
+<<else>>
 从这里可以抵达：
 
 [[海勒的房子]]
 [[学者的房子]]
 [[富商的房子]]
 [[老头的房子]]
+<</if>>
+[[小镇中心]]
 
 
 :: 工作内容 {"position":"1325,625","size":"100,100"}
@@ -123,10 +145,18 @@
 
 :: 店主 {"position":"1600,750","size":"100,100"}
 一个极其普通的店主。
-TA在朝你微笑，这令你感到毛骨悚然。
-你意识到TA只是某种类似于人类的存在。
+
+忽然间，
+你意识到他只是某种近似于人类的存在，
+占据了“商店店主”之位的某种存在。
+
+他在向你微笑，
+你感觉不到敌意，却也感觉不到善意。
+这让你感到毛骨悚然。
+还是尽早离开吧。
 
 [[商店]]
+<<set $saw_store_keeper to true>>
 
 
 :: 愤然离开 {"position":"1200,625","size":"100,100"}
@@ -200,10 +230,10 @@ TA在朝你微笑，这令你感到毛骨悚然。
 
 
 :: 查看商品 {"position":"1750,750","size":"100,100"}
-<<if ndef $bread_num_set and $day is 1>><<set $bread_num to 5>><<set $bread_having to 0>><<set $bread_num_set to true>><</if>>
+<<if ndef $bread_num_set and $day is 1>><<set $bread_num_in_store to 5>><<set $bread_having to 0>><<set $bread_num_set to true>><</if>>
  
- <<if $bread_num > 0>>
-面包 x$bread_num <<if def $money and $money > 10>><<link "购买" "查看商品">><<set $bread_num -= 1>><<set $money -= 10>><<set $bread_having += 1>><</link>><</if>>
+ <<if $bread_num_in_store > 0>>
+面包 x$bread_num_in_store <<if def $money and $money > 10>><<link "购买" "查看商品">><<set $bread_num_in_store -= 1>><<set $money -= 10>><<set $bread_having += 1>><</link>><</if>>
 <</if>>
 
 [[商店]]
@@ -211,8 +241,10 @@ TA在朝你微笑，这令你感到毛骨悚然。
 <<if $quest is "去商店买一根面包" and $bread_having > 0>><<set $quest to "带面包回去找神父">><</if>>
 
 
-:: 海勒的房子 {"position":"1975,275","size":"100,100"}
+:: 海勒的房子 {"position":"1825,150","size":"100,100"}
+没有人出来应门。
 
+[[小镇深处]]
 
 
 :: 神父 {"position":"1450,375","size":"100,100"}
@@ -223,6 +255,7 @@ TA在朝你微笑，这令你感到毛骨悚然。
 [[索取每日经费]]
 <<if $quest is "去教堂听神父交代任务">>[[关于给村民分发食物]]<</if>>
 <<if $quest is "带面包回去找神父">>[[买到面包之后呢]]<</if>>
+<<if $saw_store_keeper>>[[关于商店店主……]]<</if>>
 
 
 :: 管理员小屋 {"position":"1750,625","size":"100,100"}
@@ -243,9 +276,9 @@ TA在朝你微笑，这令你感到毛骨悚然。
 :: 索取每日经费 {"position":"1325,375","size":"100,100"}
 <<if ndef $money>><<set $money to 0>><</if>>
 <<if not $got_money_today>>
- <<set $money += 100>>
+ <<set $money += 50>>
  <<set $got_money_today to true>>
- 神父从怀中掏出100美元交给你。
+ 神父从怀中掏出50美元交给你。
  <<else>>
  你今天已经拿过钱了！不要那么厚脸皮！
 <</if>>
@@ -255,8 +288,18 @@ TA在朝你微笑，这令你感到毛骨悚然。
 [[神父]]
 
 
-:: 老头的房子 {"position":"2100,150","size":"100,100"}
+:: 老头的房子 {"position":"2125,150","size":"100,100"}
+一个和蔼的老头。
+他似乎一个人独居，
+也不知道他的亲人都去了哪里。
 
+<<if ndef $bread_num_old_man>><<set $bread_num_old_man to 1>><</if>>
+<<if ndef $likability_old_man>><<set $likability_old_man to 5>><</if>>
+<<if $bread_num_old_man < 2 and $bread_having > 1>>他似乎对你手中的面包很感兴趣。<</if>>
+<<if $likability_old_man > 6>>老头对你露出亲切的笑容。<</if>>
+
+<<if $bread_having > 0>><<link "分发面包" "老头的房子">><<set $bread_num_old_man += 1>><<set $bread_having -= 1>><<set $likability_old_man +=1>><</link>><</if>>
+[[小镇深处]]
 
 
 :: 西镇 {"position":"1050,625","size":"100,100"}
